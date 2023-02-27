@@ -1,0 +1,3 @@
+COMM_SOU,COMM_TAR,REG,VALUE
+afs,pdr,aus,0.01
+wtr,gro,col,0.02

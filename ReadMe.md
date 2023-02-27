@@ -21,6 +21,7 @@ Raw data stored in the GTAP data base are GDX files, which can be opened and ins
 |Value added|vfm|EVFM|
 
 We save raw data in each GTAP code as txt files seperated by comma, which is stored in the directory named **raw_gtap_dataset**. Following https://www.tandfonline.com/doi/epdf/10.1080/09535314.2011.563234?needAccess=true&role=button and https://www.researchgate.net/publication/352325597_Income-based_carbon_responsibility, we construct the raw MRIOT based on the proportionality assumption. The function **get_raw_MRIOT()** in **contruct_mriot_from_gtap.py** is used to construct the raw MRIOT from the GTAP data base.
+Due to restrictions in the licensing agreement, these data are not publicly available. **sample_VDFB.txt** under the **raw_gtap_dataset** directory provides a sample of VDFB.txt. 
 
 
 ### Balancing the raw MRIOT
