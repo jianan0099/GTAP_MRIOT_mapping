@@ -28,3 +28,6 @@ Following https://www.nature.com/articles/s41597-021-01023-5, we apply the RAS a
 
  - $$Y_{i} = \sum_j Z_{ij} + \sum_j F_{ij} = \sum_k Z_{ki} + VA_i$$,
  - $$\sum_i F_{ij}  =  \sum_{\text{i is located in region j}}VA_i $$.
+
+### Saving results
+Processed GTAP data (MRIOT) is stored in the directory named **processed_gtap**.
