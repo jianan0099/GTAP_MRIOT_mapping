@@ -33,4 +33,4 @@ Following https://www.nature.com/articles/s41597-021-01023-5, we apply the RAS a
  - $$\sum_i F_{ij}  =  \sum_{\text{i is located in region j}}VA_i $$.
 
 ### Saving results
-Processed GTAP data (MRIOT) is stored in the directory named **processed_gtap**.
+Processed GTAP data (MRIOT) is stored in the directory named **processed_gtap**. **processed_gtap/adjusted_MRIOT_df.pkl** contain annual trade flows (year 2014 in millions of US dollars).
