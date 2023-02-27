@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 import utils
 import pandas as pd
+import time
 from hyperparas import HyperParas
 
 hyper = HyperParas()
@@ -58,7 +59,7 @@ def get_international_Z_F():
     ### get info for international Z
     # exports: from COMM in REG_SOU to REG_TAR
     vxmd_VXSB_dict = utils.txt_to_COMM_REG_dict('raw_gtap_dataset/VXSB.txt', ['COMM', 'REG_SOU', 'REG_TAR'])
-    exports_firm_to_region = utils.raw_dict_to_matrix(vxmd_VXSB_dict, 'y', {'REG_SOU_index_in_key': 1,
+    exports_firm_to_region = utils.raw_dict_to_matrix(vxmd_VXSB_dict, 'F', {'REG_SOU_index_in_key': 1,
                                                                             'COMM_SOU_index_in_key': 0,
                                                                             'REG_TAR_index_in_key': 2}, hyper)
     # imports: COMM_SOU to COMM_TAR in REG
@@ -68,7 +69,7 @@ def get_international_Z_F():
                                                                                      'REG_TAR_index_in_key': 2}, hyper)
     # imports: from COMM in REG_SOU to REG_TAR
     vims_VMSB_dict = utils.txt_to_COMM_REG_dict('raw_gtap_dataset/VMSB.txt', ['COMM', 'REG_SOU', 'REG_TAR'])
-    imports_firms_to_region = utils.raw_dict_to_matrix(vims_VMSB_dict, 'y',
+    imports_firms_to_region = utils.raw_dict_to_matrix(vims_VMSB_dict, 'F',
                                                        {'COMM_SOU_index_in_key': 0,
                                                         'REG_SOU_index_in_key': 1,
                                                         'REG_TAR_index_in_key': 2}, hyper)
@@ -113,32 +114,58 @@ def get_value_add_firm():
 
 def get_raw_MRIOT():
     # get info for value-added cal
+    print('------------ Constructing domestic Z... --------------')
+    b = time.time()
     Z_domestic = get_Z_domestic()
+    print('------------ Done ({}s) --------------'.format(time.time()-b))
+
+    print('------------ Constructing domestic F... --------------')
+    b = time.time()
     F_domestic = get_F_domestic()
+    print('------------ Done ({}s) --------------'.format(time.time()-b))
+
+    print('------------ Constructing international Z and F... --------------')
+    b = time.time()
     Z_international, F_international = get_international_Z_F()
+    print('------------ Done ({}s) --------------'.format(time.time()-b))
+
     Z = Z_domestic + Z_international
     F = F_domestic + F_international
-    VA = get_value_add_firm()
 
+    print('------------ Constructing VA... --------------')
+    b = time.time()
+    VA = get_value_add_firm()
+    print('------------ Done ({}s) --------------'.format(time.time()-b))
+
+    print('------------ Saving raw Z, F, VA... --------------')
+    b = time.time()
     with open('processed_gtap/Z_init.pkl', 'wb') as f:
         pickle.dump(Z, f)
     with open('processed_gtap/F_init.pkl', 'wb') as f:
         pickle.dump(F, f)
     with open('processed_gtap/VA_init.pkl', 'wb') as f:
         pickle.dump(VA, f)
+    print('------------ Done ({}s) --------------'.format(time.time()-b))
 
 
 #  read raw data
 get_raw_MRIOT()
+
+print('------------ Loading raw Z, F, VA... --------------')
+b = time.time()
 with open('processed_gtap/Z_init.pkl', 'rb') as f:
     Z_init = pickle.load(f)
 with open('processed_gtap/F_init.pkl', 'rb') as f:
     F_init = pickle.load(f)
 with open('processed_gtap/VA_init.pkl', 'rb') as f:
     VA_init = pickle.load(f)
+print('------------ Done ({}s) --------------'.format(time.time()-b))
 
 # balance MRIOT
+print('------------ Balancing MRIOT... --------------')
+b = time.time()
 adjusted_MRIOT_ZF_part = utils.MRIOT_adjust(Z_init, VA_init, F_init, int(len(VA_init) / np.shape(F_init)[1]))
+print('------------ Done ({}s) --------------'.format(time.time()-b))
 
 # ---- balance check -------------
 Y_without_VA = np.sum(Z_init, axis=0)
@@ -153,6 +180,8 @@ mriot_balance_col = np.sum(adjusted_MRIOT_ZF_part, axis=0)
 # balance: mriot_balance_col[9165:], VA_by_country
 
 # ------- save final MRIOT -------------------------------
+print('------------ Saving balanced MRIOT... --------------')
+b = time.time()
 MRIOT = np.concatenate((adjusted_MRIOT_ZF_part,
                         np.concatenate([np.reshape(VA_init, (1, -1)),
                                         np.ones((1, hyper.num_regions)) * np.nan], axis=1)),
@@ -167,3 +196,4 @@ df.set_axis(indexes + ['VA'], axis=0, inplace=True)
 df.set_axis(indexes + ['y_' + region for region in hyper.regions_list], axis=1, inplace=True)
 with open('processed_gtap/adjusted_MRIOT_df.pkl', 'wb') as f:
     pickle.dump(df, f)
+print('------------ Done ({}s) --------------'.format(time.time()-b))

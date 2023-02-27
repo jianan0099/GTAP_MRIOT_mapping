@@ -23,6 +23,7 @@ Raw data stored in the GTAP data base are GDX files, which can be opened and ins
 We save raw data in each GTAP code as txt files seperated by comma, which is stored in the directory named **raw_gtap_dataset**. Following https://www.tandfonline.com/doi/epdf/10.1080/09535314.2011.563234?needAccess=true&role=button and https://www.researchgate.net/publication/352325597_Income-based_carbon_responsibility, we construct the raw MRIOT based on the proportionality assumption. The function **get_raw_MRIOT()** in **contruct_mriot_from_gtap.py** is used to construct the raw MRIOT from the GTAP data base.
 Due to restrictions in the licensing agreement, these data are not publicly available. **sample_VDFB.txt** under the **raw_gtap_dataset** directory provides a sample of VDFB.txt. 
 
+#### Run **construct_mriot_from_gtap.py** to construct MRIOT based on raw data from GTAP v10.
 
 ### Balancing the raw MRIOT
 Following https://www.nature.com/articles/s41597-021-01023-5, we apply the RAS algorithm to balance the raw MRIOT. A simple example of the RAS algorithm can be found in https://blogs.sas.com/content/iml/2020/09/08/matrix-balancing.html. We implement the RAS algorithm in **utils.MRIOT_adjust(Z_, VA_, F_, num_comm_)**. Balanced MRIOT satisfies the following conditions:
